@@ -3756,8 +3756,19 @@ fn can_extract_exported_custom_sections() {
     // Custom start=0x00028de2 end=0x00028dfc (size=0x0000001a) "icp:private candid:args"
     // Custom start=0x00028e02 end=0x00028e30 (size=0x0000002e) "icp:private motoko:stable-types"
 
-    let binary = include_bytes!("../../tests/test-data/custom_sections.wasm").to_vec();
+    let binary = include_bytes!("../../tests/test-data/users2.wasm").to_vec();
     let canister_id = test.canister_from_binary(binary).unwrap();
+    // let wat = r#"
+    //     (module
+    //         (func $test
+    //             (unreachable)
+    //         )
+    //         (func (export "canister_init")
+    //             (call $test)
+    //         )
+    //         (memory 0)
+    //     )"#;
+    // let canister_id = test.canister_from_wat(wat).unwrap();
 
     let execution_state = test.execution_state(canister_id);
     assert_eq!(

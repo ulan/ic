@@ -56,6 +56,7 @@ pub(crate) const STABLE_MEMORY_NAME: &str = "stable_memory";
 pub(crate) const STABLE_BYTEMAP_MEMORY_NAME: &str = "stable_bytemap_memory";
 
 fn wasmtime_error_to_hypervisor_error(err: anyhow::Error) -> HypervisorError {
+    eprintln!("Error: {:?}", err);
     match err.downcast::<wasmtime::Trap>() {
         Ok(trap) => trap_code_to_hypervisor_error(trap),
         Err(err) => {
@@ -216,10 +217,10 @@ impl WasmtimeEmbedder {
             .static_memory_maximum_size(MAX_STABLE_MEMORY_IN_BYTES)
             .max_wasm_stack(embedder_config.max_wasm_stack_size)
             // Disabling the address map saves about 20% of compile code size.
-            .generate_address_map(false)
+            .generate_address_map(true)
             // Disable Wasm backtraces since we don't use them and don't have
             // address maps.
-            .wasm_backtrace(false);
+            .wasm_backtrace(true);
 
         config
     }

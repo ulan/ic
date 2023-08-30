@@ -830,6 +830,11 @@ pub(crate) fn syscalls<S: SystemApi>(
         .func_wrap("ic0", "debug_print", {
             let log = log.clone();
             move |mut caller: Caller<'_, StoreData<S>>, offset: i32, length: i32| {
+                eprintln!("debug print: {} {}", offset, length);
+                if offset == 0 {
+                    eprintln!("debug print: {}", length);
+                    return Ok(());
+                }
                 charge_for_system_api_call(
                     &log,
                     canister_id,

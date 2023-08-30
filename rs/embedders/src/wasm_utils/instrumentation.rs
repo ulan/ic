@@ -1640,19 +1640,25 @@ fn get_data(
         .map(|segment| {
             let offset = match &segment.kind {
                 wasm_transform::DataSegmentKind::Active {
-                    memory_index: _,
+                    memory_index,
                     offset_expr,
-                } => match offset_expr {
+                } => {
+                    eprintln!("MEMORY index: {}", memory_index);
+                    match offset_expr {
                     Operator::I32Const { value } => *value as usize,
                     _ => return Err(WasmInstrumentationError::WasmDeserializeError(WasmError::new(
                         "complex initialization expressions for data segments are not supported!".into()
-                    ))),
-                },
+                    )))
+
+                }
+            }
 
                 _ => return Err(WasmInstrumentationError::WasmDeserializeError(
                     WasmError::new("no offset found for the data segment".into())
                 )),
             };
+
+            eprintln!("DATA: @{} len: {} end: {}", offset, segment.data.len(), offset + segment.data.len());
 
             Ok((offset, segment.data.to_vec()))
         })
